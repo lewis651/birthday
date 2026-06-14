@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little World Made For You ✨</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0b0a09;
+            color: #f5f4f0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        .serif-title {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        /* Custom App Viewport Container */
+        .page-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0;
+            z-index: 10;
+        }
+        .page-view.active {
+            display: flex;
+            opacity: 1;
+            z-index: 20;
+        }
+        /* Luxury Glassmorphism */
+        .glass-panel {
+            background: rgba(15, 14, 13, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        /* Cursor Trail Sparkle */
+        .sparkle-trail {
+            pointer-events: none;
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff 20%, #d4af37 80%);
+            box-shadow: 0 0 10px #d4af37, 0 0 20px #fff;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+        /* Custom Keyframes for non-GSAP ambient elements */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #f5f4f0 25%, #d4af37 50%, #f5f4f0 75%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+        /* VHS Retro Filter for Chapter 2 */
+        .vhs-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .vhs-effect::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="relative select-none">
+
+    <audio id="bgMusic" src="assets/music.mp3" loop></audio>
+    <audio id="birthdayMusic" src="assets/birthday.mp3"></audio>
+
+    <div id="particleContainer" class="absolute inset-0 pointer-events-none overflow-hidden z-30"></div>
+
+    <div id="navControls" class="absolute bottom-8 right-8 md:right-12 z-50 flex space-x-4 opacity-0 pointer-events-none transition-opacity duration-500">
+        <button id="nextBtn" class="px-6 py-3 rounded-full border border-[#d4af37] bg-black/60 text-[#d4af37] tracking-widest text-xs uppercase hover:bg-[#d4af37] hover:text-black transition-all duration-300 shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center gap-2 cursor-pointer">
+            Next Moment <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <section id="screen1" class="page-view flex flex-col items-center justify-center text-center px-4 relative active">
+        <div class="absolute inset-0 bg-cover bg-center opacity-20 filter blur-md transition-all duration-1000 scale-105" style="background-image: url('assets/image1.jpg');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0b0a09] via-transparent to-[#0b0a09]"></div>
+        
+        <div class="z-20 max-w-2xl px-6">
+            <div id="openingTextContainer" class="space-y-6 serif-title italic text-xl md:text-3xl text-gray-300 font-light">
+                <p class="op-line opacity-0">Hey Angel ❤️</p>
+                <p class="op-line opacity-0 text-sm md:text-base tracking-widest uppercase font-sans text-gray-400">Before you read anything...</p>
+                <p class="op-line opacity-0 text-[#d4af37]">I made something special for you.</p>
+                <p class="op-line opacity-0">Not just a birthday message...</p>
+                <p class="op-line opacity-0 serif-title text-2xl md:text-4xl text-white">A little piece of memories.</p>
+            </div>
+            
+            <button id="startExperienceBtn" class="mt-12 px-8 py-4 rounded-full bg-gradient-to-r from-[#d4af37] via-[#f3e5ab] to-[#d4af37] text-black font-semibold tracking-widest text-xs uppercase opacity-0 scale-75 shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105 transition-transform duration-300 cursor-pointer">
+                ✨ click this ✨
+            </button>
+        </div>
+    </section>
+
+    <section id="screen2" class="page-view flex-col items-center justify-center relative px-4">
+        <div class="absolute inset-0 overflow-hidden">
+            <div id="heroBgImg" class="w-full h-full bg-cover bg-center opacity-30 scale-110" style="background-image: url('assets/image1.jpg');"></div>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0b0a09] via-transparent to-[#0b0a09]"></div>
+
+        <div class="z-20 text-center max-w-4xl space-y-8">
+            <h1 class="serif-title text-4xl md:text-7xl font-light tracking-wide text-white leading-tight">
+                Happy Birthday, <span class="shimmer-text font-normal block md:inline">Angel</span> 👑
+            </h1>
+            <div class="w-24 h-[1px] bg-[#d4af37] mx-auto my-4"></div>
+            <p class="text-sm md:text-lg tracking-widest uppercase font-light text-gray-300 max-w-xl mx-auto leading-relaxed px-4">
+                Today is about celebrating someone who brings beauty, laughter, and light into this world.
+            </p>
+        </div>
+    </section>
+
+    <section id="screen3" class="page-view flex-col items-center justify-center px-4 md:px-12 relative">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl items-center z-20 w-full">
+            <div class="space-y-6 text-left">
+                <span class="text-xs uppercase tracking-widest text-[#d4af37] block font-semibold">Chapter 1</span>
+                <h2 class="serif-title text-3xl md:text-5xl text-white">"The Beginning"</h2>
+                <p class="text-gray-300 font-light leading-relaxed text-sm md:text-base italic">
+                    I still remember this moment... <br><br>
+                    A new place. A new journey. A new chapter.<br><br>
+                    But distance never changes the value of a beautiful person.
+                </p>
+            </div>
+            <div class="flex justify-center items-center">
+                <div class="p-2 border border-[#d4af37]/40 bg-neutral-900 rounded-lg shadow-2xl max-w-sm w-full">
+                    <img id="chap1Img" src="assets/image2.jpg" alt="The Journey" class="w-full h-auto object-cover rounded max-h-[450px]">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="screen4" class="page-view flex-col items-center justify-center px-4 relative bg-black">
+        <div class="z-20 text-center max-w-3xl space-y-8 w-full">
+            <span class="text-xs uppercase tracking-widest text-pink-500 font-semibold block">Chapter 2</span>
+            <h2 class="serif-title text-4xl md:text-6xl text-white italic tracking-wide">"The 90s Queen"</h2>
+            
+            <div class="vhs-effect mx-auto my-6 w-64 h-80 md:w-72 md:h-96 border-4 border-double border-white/20 rounded shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+                <img src="assets/image4.jpg" alt="90s Look" class="w-full h-full object-cover filter contrast-125 saturate-75">
+            </div>
+
+            <p class="font-mono text-xs md:text-sm tracking-widest text-gray-400 uppercase">
+                Some people follow trends... <br>
+                <span class="text-white text-base md:text-lg font-sans normal-case italic font-light tracking-normal block mt-2">You create your own.</span>
+            </p>
+        </div>
+    </section>
+
+    <section id="screen5" class="page-view flex-col items-center justify-center px-4 relative">
+        <div class="z-20 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl items-center w-full">
+            <div class="flex justify-center">
+                <div class="p-2 border border-[#d4af37]/40 bg-neutral-900 rounded-sm shadow-2xl rotate-[-2deg] max-w-sm">
+                    <img src="assets/image5.jpg" alt="Classy" class="w-full h-auto object-cover max-h-[450px]">
+                </div>
+            </div>
+            <div class="space-y-6 text-left md:pl-8">
+                <span class="text-xs uppercase tracking-widest text-[#d4af37] font-semibold block">Chapter 3</span>
+                <h2 class="serif-title text-4xl md:text-5xl text-white font-light">"The Classy Side"</h2>
+                <div class="space-y-3 font-light tracking-wide text-gray-300 text-lg md:text-2xl italic">
+                    <p class="c3-line opacity-0">Grace.</p>
+                    <p class="c3-line opacity-0">Confidence.</p>
+                    <p class="c3-line opacity-0 text-white font-normal">Beauty.</p>
+                </div>
+                <p class="text-xs uppercase tracking-widest text-[#d4af37]/70 mt-4 font-mono font-bold">A whole vibe.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="screen6" class="page-view flex-col items-center justify-center px-4 relative">
+        <div class="z-20 w-full max-w-4xl text-center space-y-6">
+            <h2 class="serif-title text-3xl md:text-5xl font-light text-white">The Luxury Gallery</h2>
+            <p class="text-xs tracking-widest uppercase text-gray-400 max-w-md mx-auto mb-8">Click a portrait to unfold a hidden memory</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 px-2">
+                <div class="gallery-item overflow-hidden rounded cursor-pointer border border-white/10 shadow-lg" data-memory="Your smile can instantly brighten up the darkest room. ❤️">
+                    <img src="assets/image1.jpg" class="w-full h-48 md:h-64 object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="gallery-item overflow-hidden rounded cursor-pointer border border-white/10 shadow-lg" data-memory="Never losing focus, always elegant, always uniquely you. ✨">
+                    <img src="assets/image2.jpg" class="w-full h-48 md:h-64 object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="gallery-item overflow-hidden rounded cursor-pointer border border-white/10 shadow-lg" data-memory="Every picture of yours holds a story worth keeping. 📖">
+                    <img src="assets/image3.jpg" class="w-full h-48 md:h-64 object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="gallery-item overflow-hidden rounded cursor-pointer border border-white/10 shadow-lg" data-memory="Unapologetically authentic, fierce, and effortlessly beautiful. 👑">
+                    <img src="assets/image4.jpg" class="w-full h-48 md:h-64 object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="gallery-item overflow-hidden rounded cursor-pointer border border-white/10 shadow-lg" data-memory="Pure class. There is an unmatched grace in how you carry yourself. 🌹">
+                    <img src="assets/image5.jpg" class="w-full h-48 md:h-64 object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+            </div>
+        </div>
+
+        <div id="galleryLightbox" class="absolute inset-0 bg-black/95 z-50 hidden opacity-0 flex flex-col items-center justify-center p-4">
+            <button id="closeLightbox" class="absolute top-6 right-6 text-white text-2xl hover:text-[#d4af37] transition-colors md:block hidden cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <img id="lightboxImg" src="" class="max-w-full max-h-[55vh] object-contain rounded border border-white/20 shadow-2xl">
+            <p id="lightboxText" class="mt-6 serif-title text-xl md:text-2xl text-[#d4af37] text-center max-w-xl italic px-4"></p>
+            
+            <button id="mobileCloseLightbox" class="mt-8 px-6 py-2.5 rounded-full border border-white/20 bg-neutral-900 text-white tracking-widest text-xs uppercase flex items-center gap-2 md:hidden cursor-pointer active:scale-95 transition-transform">
+                Close <i class="fa-solid fa-xmark text-[#d4af37]"></i>
+            </button>
+        </div>
+    </section>
+
+    <section id="screen7" class="page-view flex-col items-center justify-center px-4 relative">
+        <div class="z-20 text-center space-y-8 glass-panel p-8 md:p-12 rounded-2xl max-w-md w-full shadow-2xl mx-4">
+            <div class="text-[#d4af37] text-5xl md:text-6xl animate-pulse">
+                <i class="fa-solid fa-compact-disc fa-spin" style="animation-duration: 4s;"></i>
+            </div>
+            <div class="space-y-2">
+                <h2 class="serif-title text-2xl md:text-4xl text-white">A Special Track</h2>
+                <p class="text-xs uppercase tracking-widest text-gray-400">Dedicated exclusively to you</p>
+            </div>
+            
+            <button id="playBdayMusicBtn" class="w-20 h-20 rounded-full bg-[#d4af37] text-black text-2xl flex items-center justify-center mx-auto shadow-[0_0_25px_rgba(212,175,55,0.5)] hover:scale-110 transition-transform cursor-pointer">
+                <i id="playIcon" class="fa-solid fa-play ml-1"></i>
+            </button>
+            
+            <div id="bdayPlayingStatus" class="text-xs font-mono text-gray-400 tracking-widest uppercase h-4 opacity-0">Playing celebration track...</div>
+        </div>
+    </section>
+
+    <section id="screen8" class="page-view flex-col items-center justify-start pt-12 px-4 relative bg-neutral-950">
+        <div class="relative z-20 w-full max-w-3xl h-[45vh] flex items-center justify-center bg-black/60 rounded-xl border border-white/10 shadow-inner mt-4">
+            <svg class="w-full h-full p-4" viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="280" cy="300" r="14" fill="rgba(212,175,55,0.3)" class="animate-ping" style="animation-duration: 2.5s;"/>
+                <circle cx="280" cy="300" r="8" fill="#d4af37"/>
+                <rect x="200" y="325" width="160" height="32" rx="6" fill="#141312" stroke="#d4af37" stroke-width="1.5"/>
+                <text x="280" y="345" fill="#ffffff" font-family="Montserrat" font-size="11" font-weight="600" letter-spacing="2" text-anchor="middle">CAMEROON</text>
+                
+                <circle cx="520" cy="100" r="14" fill="rgba(212,175,55,0.3)" class="animate-ping" style="animation-duration: 2.5s; animation-delay: 1s;"/>
+                <circle cx="520" cy="100" r="8" fill="#d4af37"/>
+                <rect x="460" y="45" width="120" height="32" rx="6" fill="#141312" stroke="#d4af37" stroke-width="1.5"/>
+                <text x="520" y="65" fill="#ffffff" font-family="Montserrat" font-size="11" font-weight="600" letter-spacing="2" text-anchor="middle">ITALY</text>
+                
+                <path id="mapConnectionArc" d="M 280 300 Q 380 180 520 100" stroke="rgba(212,175,55,0.3)" stroke-width="3" stroke-dasharray="8,6"/>
+                <path id="glowingMapLine" d="M 280 300 Q 380 180 520 100" stroke="#d4af37" stroke-width="4" stroke-linecap="round" filter="drop-shadow(0px 0px 10px #d4af37)"/>
+            </svg>
+        </div>
+
+        <div class="z-20 text-center max-w-2xl w-full mt-10 px-4 space-y-4">
+            <div class="space-y-3 serif-title text-2xl md:text-4xl text-gray-200 italic font-light leading-relaxed">
+                <p class="dist-line opacity-0 inline-block px-2">Different countries.</p>
+                <p class="dist-line opacity-0 inline-block px-2 md:block">Different skies.</p>
+                <p class="dist-line opacity-0 text-white font-normal mt-6 tracking-wide not-italic font-sans text-sm md:text-lg uppercase">
+                    But some friendships don't need <br class="hidden md:inline">the same location to stay close.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="screen9" class="page-view flex-col items-center justify-center px-4 relative">
+        <div class="z-20 w-full max-w-xl">
+            <div id="envelopeContainer" class="glass-panel p-6 md:p-10 rounded-xl shadow-2xl relative overflow-hidden transition-all duration-700 max-h-[80vh] flex flex-col justify-between">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#d4af37] via-white to-[#d4af37]"></div>
+                <div id="letterBody" class="serif-title font-light text-base md:text-xl text-stone-200 leading-relaxed space-y-4 overflow-y-auto pr-2 h-full"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="screen10" class="page-view flex-col items-center justify-center text-center px-4 relative bg-[#050505]">
+        <div class="absolute inset-0 bg-radial-gradient from-neutral-900 to-black pointer-events-none opacity-60"></div>
+        
+        <div class="z-20 max-w-lg space-y-8 px-4 flex flex-col items-center">
+            <div id="finalSurpriseTextContainer" class="space-y-4 text-gray-400 font-light tracking-wide text-sm md:text-base uppercase">
+                <p class="final-line opacity-0">One last thing...</p>
+                <p class="final-line opacity-0 text-lg font-serif italic text-white normal-case">Never forget:</p>
+                <div class="final-line opacity-0 py-2 space-y-1 font-serif italic text-xl md:text-3xl text-white normal-case">
+                    <p class="text-[#d4af37]">You are loved.</p>
+                    <p>You are appreciated.</p>
+                    <p>You matter.</p>
+                </div>
+                <h2 class="final-line opacity-0 serif-title text-3xl md:text-5xl font-normal text-white normal-case tracking-normal pt-4">
+                    Happy Birthday ✨❤️
+                </h2>
+            </div>
+            
+            <div id="finalPortraitWrapper" class="opacity-0 scale-90 w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden border-2 border-[#d4af37] shadow-[0_0_40px_rgba(212,175,55,0.4)] mt-6">
+                <img src="assets/image1.jpg" alt="Angel" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let currentScreenIndex = 1;
+        const totalScreens = 10;
+        
+        const bgMusic = document.getElementById('bgMusic');
+        const bdayMusic = document.getElementById('birthdayMusic');
+        const navControls = document.getElementById('navControls');
+        const nextBtn = document.getElementById('nextBtn');
+
+        const letterParagraphs = [
+            "Dear Angel,",
+            "Happy Birthday ❤️",
+            "I hope today reminds you how special you are.",
+            "Even though we are far apart, I want you to know that I truly appreciate having you in my life.",
+            "I hope this new year brings you happiness, success, peace, and everything beautiful.",
+            "Keep being the amazing person you are.",
+            "Enjoy your day ❤️"
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initAmbientParticles();
+            initCursorTrail();
+            setupScreenTransitions();
+            setupGallerySystem();
+            setupAudioInterlocking();
+        });
+
+        function initCursorTrail() {
+            if (window.matchMedia('(pointer: coarse)').matches) return;
+            window.addEventListener('mousemove', (e) => {
+                if(Math.random() > 0.15) return;
+                const trail = document.createElement('div');
+                trail.className = 'sparkle-trail';
+                trail.style.left = `${e.clientX}px`;
+                trail.style.top = `${e.clientY}px`;
+                document.body.appendChild(trail);
+                
+                gsap.to(trail, {
+                    x: (Math.random() - 0.5) * 20,
+                    y: (Math.random() - 0.5) * 20 + 30,
+                    opacity: 0,
+                    scale: 0.1,
+                    duration: 0.8 + Math.random() * 0.4,
+                    onComplete: () => trail.remove()
+                });
+            });
+        }
+
+        function initAmbientParticles() {
+            const container = document.getElementById('particleContainer');
+            const particleTypes = ['✨', '❤️', '🌸', '⭐', '⚪'];
+            for (let i = 0; i < 35; i++) {
+                createSingleParticle(container, particleTypes);
+            }
+        }
+
+        function createSingleParticle(parent, types) {
+            const particle = document.createElement('div');
+            particle.className = 'absolute pointer-events-none select-none opacity-0 text-sm';
+            particle.innerText = types[Math.floor(Math.random() * types.length)];
+            parent.appendChild(particle);
+            resetParticleProperties(particle);
+        }
+
+        function resetParticleProperties(el) {
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight + 20;
+            const size = 10 + Math.random() * 20;
+            const duration = 8 + Math.random() * 12;
+            const delay = Math.random() * 5;
+
+            gsap.set(el, { x: startX, y: startY, fontSize: `${size}px`, opacity: 0 });
+            gsap.to(el, {
+                y: -50,
+                x: startX + (Math.random() - 0.5) * 200,
+                opacity: Math.random() * 0.7 + 0.2,
+                rotation: Math.random() * 360,
+                duration: duration,
+                delay: delay,
+                ease: "power1.out",
+                onComplete: () => resetParticleProperties(el)
+            });
+        }
+
+        function setupScreenTransitions() {
+            const startBtn = document.getElementById('startExperienceBtn');
+            
+            gsap.set(".op-line", { opacity: 0, y: 15 });
+            gsap.set(startBtn, { opacity: 0, scale: 0.75 });
+
+            const introTimeline = gsap.timeline();
+            introTimeline.to(".op-line", {
+                opacity: 1,
+                y: 0,
+                stagger: 1.0,
+                duration: 0.8,
+                ease: "power2.out"
+            });
+            introTimeline.to(startBtn, { 
+                opacity: 1, 
+                scale: 1, 
+                duration: 0.5, 
+                ease: "back.out(1.7)" 
+            }, "-=0.2");
+
+            startBtn.addEventListener('click', () => {
+                bgMusic.play().catch(err => console.log("Audio contexts unblocked safely:", err));
+                navigateToNextScreen();
+                
+                setTimeout(() => {
+                    navControls.classList.remove('pointer-events-none');
+                    navControls.classList.remove('opacity-0');
+                }, 1000);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if(currentScreenIndex < totalScreens) {
+                    navigateToNextScreen();
+                }
+            });
+        }
+
+        function navigateToNextScreen() {
+            const currentScreen = document.getElementById(`screen${currentScreenIndex}`);
+            currentScreenIndex++;
+            const nextScreen = document.getElementById(`screen${currentScreenIndex}`);
+
+            nextBtn.style.pointerEvents = 'none';
+
+            const transitionTimeline = gsap.timeline({
+                onComplete: () => {
+                    currentScreen.classList.remove('active');
+                    nextBtn.style.pointerEvents = 'auto';
+                    if(currentScreenIndex === totalScreens) {
+                        navControls.style.display = 'none';
+                    }
+                }
+            });
+
+            transitionTimeline.to(currentScreen, { opacity: 0, scale: 0.95, duration: 0.5, ease: "power2.inOut" });
+            transitionTimeline.call(() => {
+                nextScreen.classList.add('active');
+                executeScreenSpecificAnimations(currentScreenIndex);
+            });
+            transitionTimeline.to(nextScreen, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, "+=0.05");
+        }
+
+        function executeScreenSpecificAnimations(index) {
+            switch(index) {
+                case 2:
+                    gsap.fromTo("#heroBgImg", { scale: 1.2 }, { scale: 1, duration: 5, ease: "power1.out" });
+                    gsap.from("#screen2 h1, #screen2 p, #screen2 div", { opacity: 0, y: 25, stagger: 0.2, duration: 0.8, ease: "power3.out" });
+                    break;
+                case 3:
+                    gsap.from("#screen3 h2, #screen3 p, #screen3 span", { opacity: 0, x: -25, stagger: 0.15, duration: 0.7 });
+                    gsap.fromTo("#chap1Img", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.0, ease: "power3.out" });
+                    break;
+                case 4:
+                    gsap.from("#screen4 h2, #screen4 p, .vhs-effect", { opacity: 0, y: 30, stagger: 0.2, duration: 0.8, ease: "back.out(1.2)" });
+                    break;
+                case 5:
+                    gsap.from("#screen5 img", { opacity: 0, rotation: -6, scale: 0.8, duration: 1.0, ease: "power3.out" });
+                    gsap.to(".c3-line", { opacity: 1, y: -5, stagger: 0.3, duration: 0.6, ease: "power2.out", delay: 0.3 });
+                    break;
+                case 6:
+                    gsap.from(".gallery-item", { opacity: 0, y: 15, scale: 0.9, stagger: 0.1, duration: 0.6, ease: "power2.out" });
+                    break;
+                case 8:
+                    gsap.fromTo(".dist-line", { opacity: 0, y: 15 }, { opacity: 1, y: 0, stagger: 0.4, duration: 0.8 });
+                    
+                    const path = document.getElementById('glowingMapLine');
+                    const totalLength = path.getTotalLength();
+                    gsap.set(path, { strokeDasharray: totalLength, strokeDashoffset: totalLength });
+                    gsap.to(path, { strokeDashoffset: 0, duration: 2.5, ease: "power2.inOut", delay: 0.4 });
+                    break;
+                case 9:
+                    startLetterTypewriter();
+                    break;
+                case 10:
+                    gsap.to(".final-line", { opacity: 1, y: -5, stagger: 1.2, duration: 1.0, ease: "power3.out" });
+                    gsap.to("#finalPortraitWrapper", { opacity: 1, scale: 1, duration: 1.2, delay: 4.5, ease: "back.out(1.2)" });
+                    break;
+            }
+        }
+
+        function setupGallerySystem() {
+            const items = document.querySelectorAll('.gallery-item');
+            const lightbox = document.getElementById('galleryLightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxText = document.getElementById('lightboxText');
+            
+            const closeBtn = document.getElementById('closeLightbox');
+            const mobileCloseBtn = document.getElementById('mobileCloseLightbox');
+
+            items.forEach(item => {
+                item.addEventListener('click', () => {
+                    const imgSrc = item.querySelector('img').getAttribute('src');
+                    const memoryMsg = item.getAttribute('data-memory');
+                    lightboxImg.setAttribute('src', imgSrc);
+                    lightboxText.innerText = memoryMsg;
+                    lightbox.classList.remove('hidden');
+                    gsap.to(lightbox, { opacity: 1, duration: 0.3, onComplete: () => {
+                        gsap.fromTo(lightboxImg, { scale: 0.8 }, { scale: 1, duration: 0.4, ease: "back.out(1.2)" });
+                    }});
+                });
+            });
+
+            // Reusable close functional structure linking both close mechanics cleanly
+            function hideLightbox() {
+                gsap.to(lightbox, { opacity: 0, duration: 0.2, onComplete: () => {
+                    lightbox.classList.add('hidden');
+                }});
+            }
+
+            closeBtn.addEventListener('click', hideLightbox);
+            mobileCloseBtn.addEventListener('click', hideLightbox);
+        }
+
+        function setupAudioInterlocking() {
+            const playBdayBtn = document.getElementById('playBdayMusicBtn');
+            const playIcon = document.getElementById('playIcon');
+            const statusLabel = document.getElementById('bdayPlayingStatus');
+            let isBdayTrackPlaying = false;
+
+            playBdayBtn.addEventListener('click', () => {
+                if(!isBdayTrackPlaying) {
+                    gsap.to(bgMusic, { volume: 0, duration: 0.5, onComplete: () => bgMusic.pause() });
+                    bdayMusic.currentTime = 0;
+                    bdayMusic.volume = 1;
+                    bdayMusic.play();
+                    
+                    playIcon.className = "fa-solid fa-pause";
+                    gsap.to(statusLabel, { opacity: 1, duration: 0.3 });
+                    isBdayTrackPlaying = true;
+                } else {
+                    pauseBirthdayAndResumeTheme();
+                }
+            });
+
+            bdayMusic.addEventListener('ended', () => {
+                pauseBirthdayAndResumeTheme();
+            });
+
+            function pauseBirthdayAndResumeTheme() {
+                bdayMusic.pause();
+                playIcon.className = "fa-solid fa-play";
+                gsap.to(statusLabel, { opacity: 0, duration: 0.3 });
+                isBdayTrackPlaying = false;
+                bgMusic.play();
+                gsap.to(bgMusic, { volume: 1, duration: 0.8 });
+            }
+        }
+
+        function startLetterTypewriter() {
+            const letterBody = document.getElementById('letterBody');
+            letterBody.innerHTML = "";
+            let paragraphIndex = 0;
+
+            function typeNextParagraph() {
+                if(paragraphIndex < letterParagraphs.length) {
+                    const paragraphElement = document.createElement('p');
+                    if (paragraphIndex === 0) paragraphElement.className = "text-[#d4af37] font-normal mb-4";
+                    else if (paragraphIndex === 1) paragraphElement.className = "text-xl font-medium tracking-wide mb-6";
+                    else paragraphElement.className = "mb-4 font-light text-stone-300";
+                    
+                    letterBody.appendChild(paragraphElement);
+                    
+                    let characterIndex = 0;
+                    const targetTextString = letterParagraphs[paragraphIndex];
+
+                    function typeCharacter() {
+                        if(characterIndex < targetTextString.length) {
+                            paragraphElement.innerHTML += targetTextString.charAt(characterIndex);
+                            characterIndex++;
+                            setTimeout(typeCharacter, 30);
+                        } else {
+                            paragraphIndex++;
+                            setTimeout(typeNextParagraph, 500);
+                        }
+                        letterBody.scrollTop = letterBody.scrollHeight;
+                    }
+                    typeCharacter();
+                }
+            }
+            setTimeout(typeNextParagraph, 400);
+        }
+    </script>
+</body>
+</html>
